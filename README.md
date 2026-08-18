@@ -3,8 +3,9 @@
 ## Profesor David Alonso 
 Cantú Delgado (david.cantu.delgado@tec.mx)
 
-### Nombre: Carolina
-### Matrícula: {Escribe tu matrícula}
-### Carrera: {Escribe las iniciales de tu carrera}
-### Ciudad: {Escribe el nombre tu ciudad}
+### Nombre: Carolina Vildósola Guzmán 
+### Matrícula: A01287373
+### Carrera: ITD
+### Ciudad: MTY
+### Grupo: 607
 
