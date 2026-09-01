@@ -1,9 +1,15 @@
-
- // Carolina Vildósola Guzmán
+// Carolina Vildósola Guzmán
 // A01287373
 
-#include <iostream>
-#include <vector>
+//programa 1
+
+#include <iostream>   // cin y cout
+#include <vector>     // vector
+#include <algorithm>  // sort
+#include <cstdlib>    // rand y srand
+#include <ctime>      // time(0)
+#include <chrono>     // medir tiempos
+
 using namespace std;
 
 /*
@@ -24,52 +30,115 @@ int main() {
 }
 */
 
-//busqueda binaria
+
+template <typename T>
+int sequentialSearch(vector<T> &list, T data) {
+    for (int i = 0; i < list.size(); i++) {
+        if (list[i] == data) {
+            return i;
+        }
+    }
+
+    return -1;
+}
 
 template <typename T>
 int binarySearch(vector<T> &list, T data) {
-   //obtenemos left
-   int left = 0;
-   //obtenemos right
+
+    int left = 0;
     int right = list.size() - 1;
-    // buscamos el elemento mientras left <= right
 
     while (left <= right) {
-        //obtenemos la mitad
+
         int mid = (left + right) / 2;
-        // comparamos valor buscado con valor de la mitad
+
         if (data == list[mid]) {
-            //regresamos el valor de mid que es el indice del valor encontrado
             return mid;
+        }
+
+        if (data < list[mid]) {
+            right = mid - 1;
         } else {
-            //preguntamos si el valor buscado es menor que el valor de mid 
-            if (data< list[mid]) {
-                //si es menor, entonces el valor buscado se encuentra en la mitad izquierda
-                right = mid - 1;
-                        } else {
-                //si es mayor, entonces el valor buscado se encuentra en la mitad derecha
-                left = mid + 1;
-            }
+            left = mid + 1;
         }
     }
 
-    throw out_of_range("El valor no se encuentra en la lista");
+    return -1;
 }
-    
 
 int main() {
-    vector<int> numeros = {3,5,6,7,11,12,13,16,27,35};
-    int buscar = 14;
-    int resultado = binarySearch(numeros, buscar);
-    try {
-        if (resultado != -1) {
-            cout << "El valor " << buscar << " se encuentra en el índice: " <<
-        resultado << endl;
-        }
-    } catch (const out_of_range& e) {
-        cout << e.what() << endl;
+
+    vector<int> numeros;
+
+    srand(time(0));
+
+    // generamos 10,000 numeros aleatorios
+    for (int i = 0; i < 10000; i++) {
+        int numero = rand() % 1000000 + 1;
+        numeros.push_back(numero);
     }
 
+    // ordenamos el vector
+    sort(numeros.begin(), numeros.end());
+
+    //para saber q número si exiten jeje
+    cout << "Ejemplos de numeros que estan en la lista: " << endl;
+
+for (int i = 0; i < 5; i++) {
+    cout << numeros[i] << " ";
 }
+
+cout << endl;
+
+    int buscar;
+
+    cout << "Ingresa un numero entre 1 y 1000000 (0 para salir): ";
+    cin >> buscar;
+
+    while (buscar != 0) {
+
+        // secuencial
+        auto inicio = chrono::high_resolution_clock::now();
+
+        int resultadoSecuencial = sequentialSearch(numeros, buscar);
+
+        auto fin = chrono::high_resolution_clock::now();
+
+        if (resultadoSecuencial != -1) {
+            cout << "Secuencial: el numero si esta en la lista." << endl;
+        } else {
+            cout << "Secuencial: el numero no esta en la lista." << endl;
+        }
+
+        cout << "Tiempo secuencial: "
+             << chrono::duration_cast<chrono::nanoseconds>(fin - inicio).count()
+             << " nanosegundos" << endl;
+
+
+        // binaria
+        auto inicio2 = chrono::high_resolution_clock::now();
+
+        int resultadoBinario = binarySearch(numeros, buscar);
+
+        auto fin2 = chrono::high_resolution_clock::now();
+
+        if (resultadoBinario != -1) {
+            cout << "Binaria: el numero si esta en la lista." << endl;
+        } else {
+            cout << "Binaria: el numero no esta en la lista." << endl;
+        }
+
+        cout << "Tiempo binario: "
+             << chrono::duration_cast<chrono::nanoseconds>(fin2 - inicio2).count()
+             << " nanosegundos" << endl;
+
+
+        cout << "\nIngresa otro numero (0 para salir): ";
+        cin >> buscar;
+    }
+
+    return 0;
+}
+
 
 
