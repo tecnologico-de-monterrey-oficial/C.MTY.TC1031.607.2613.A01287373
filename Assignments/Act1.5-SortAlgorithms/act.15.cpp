@@ -106,6 +106,54 @@ void insertionSort(vector<T> &list) {
 }
 
 
+// quick sort
+// variables index, aux y pivot
+
+template <typename T>
+int getPivot(vector<T> &list, int left, int right) {
+
+    T pivot = list[right]; // tomamos el ultimo elemento como pivote
+    int index = left;      // posicion donde vamos poniendo los menores al pivote
+
+    for (int i = left; i < right; i++) {
+
+        // si el num es menor que el pivote, lo movemos a la izq
+        if (list[i] < pivot) {
+
+            T aux = list[i];
+            list[i] = list[index];
+            list[index] = aux;
+
+            index++;
+        }
+    }
+
+    // ponemos el pivote en su lugar correcto
+    T aux = list[index];
+    list[index] = list[right];
+    list[right] = aux;
+
+    return index; // regresamos la pos donde quedo el pivote
+}
+
+
+template <typename T>
+void quickSort(vector<T> &list, int left, int right) {
+
+    // solo seguimos si aun hay elementos que ordenar
+    if (left < right) {
+
+        // encontramos y acomodamos el pivote
+        int pivot = getPivot(list, left, right);
+
+        // ordenamos la parte izq
+        quickSort(list, left, pivot - 1);
+
+        // ordenamos la parte derecha
+        quickSort(list, pivot + 1, right);
+    }
+}
+
 int main() {
 
     vector<double> list = {64, 34, 25, 12, 11.4, 11.6, 90};
@@ -153,6 +201,16 @@ int main() {
     }
 
     cout << endl;
+    
+    quickSort(list, 0, list.size() - 1);
+
+    cout << "Sorted quick: \n";
+
+    for (int i = 0; i < list.size(); i++) {
+    cout << list[i] << " ";
+    }   
+
+    cout << endl;   
 
     return 0;
 }
