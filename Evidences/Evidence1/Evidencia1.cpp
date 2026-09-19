@@ -23,5 +23,18 @@ struct Log {
 
 int main() {
 
+    // Abrimos el archivo que contiene los logs
+    ifstream archivo("data/log607-1.txt");
+
+    // Revisamos si el archivo se pudo abrir correctamente
+    if (!archivo.is_open()) {
+        cout << "Error: no se pudo abrir el archivo." << endl;
+        return 1;
+    }
+
+    cout << "Archivo abierto correctamente." << endl;
+
+    archivo.close();
+
     return 0;
 }
