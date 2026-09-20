@@ -1,6 +1,4 @@
 
-
-
 // Carolina Vildosola Guzman
 // A01287373
 
