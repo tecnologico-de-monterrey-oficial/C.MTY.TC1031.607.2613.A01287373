@@ -39,6 +39,30 @@ int mesANumero(string mes) {
     return 0;
 }
 
+
+// Compara dos logs para saber cual paso primero
+bool esMenor(Log a, Log b) {
+
+    // Primero comparamos el año
+    if (a.anio != b.anio) {
+        return a.anio < b.anio;
+    }
+
+    // Si el año es igual, comparamos el mes
+    if (mesANumero(a.mes) != mesANumero(b.mes)) {
+        return mesANumero(a.mes) < mesANumero(b.mes);
+    }
+
+    // Si el mes tambien es igual, comparamos el dia
+    if (a.dia != b.dia) {
+        return a.dia < b.dia;
+    }
+
+    // Si la fecha es igual, comparamos la hora
+    return a.hora < b.hora;
+}
+
+
 int main() {
 
     // Abrimos el archivo que contiene los logs
