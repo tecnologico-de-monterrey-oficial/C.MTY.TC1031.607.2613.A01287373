@@ -317,7 +317,58 @@ void guardarLogs(vector<Log> &logs) {
 }
 
 
+// Busca el primer log que sea igual o posterior a la fecha inicial
+int buscarInicio(vector<Log> &logs, Log inicio) {
+
+    int izquierda = 0;
+    int derecha = logs.size();
+
+    while (izquierda < derecha) {
+
+        int medio = izquierda + (derecha - izquierda) / 2;
+
+        // Si el log del medio es menor que el inicio,
+        // tenemos que buscar a la derecha
+        if (esMenor(logs[medio], inicio)) {
+            izquierda = medio + 1;
+        }
+        else {
+            derecha = medio;
+        }
+    }
+
+    return izquierda;
+}
+
+
+// Busca el primer log que sea posterior a la fecha final
+int buscarFin(vector<Log> &logs, Log fin) {
+
+    int izquierda = 0;
+    int derecha = logs.size();
+
+    while (izquierda < derecha) {
+
+        int medio = izquierda + (derecha - izquierda) / 2;
+
+        // Si fin es menor que el log del medio,
+        // el limite esta hacia la izquierda
+        if (esMenor(fin, logs[medio])) {
+            derecha = medio;
+        }
+        else {
+            izquierda = medio + 1;
+        }
+    }
+
+    return izquierda;
+}
+
 int main() {
+
+    int repetir = 1;
+
+    while (repetir == 1) { 
 
     // ELEGIR ARCHIVO
 
@@ -469,9 +520,20 @@ int main() {
 
     mostrarComplejidad(opcionAlgoritmo);
 
-    cout << "Tu prediccion fue: " << prediccion << endl;
-    cout << "Razon: " << razon << endl;
+        cout << "Tu prediccion fue: " << prediccion << endl;
+        cout << "Razon: " << razon << endl;
 
+        cout << endl;
+        cout << "Deseas hacer otra corrida?" << endl;
+        cout << "1. Si" << endl;
+        cout << "2. No" << endl;
+        cout << "Opcion: ";
+        cin >> repetir;
+
+        cout << endl;
+    }
+
+    cout << "Programa terminado." << endl;
 
     return 0;
 }
