@@ -263,6 +263,60 @@ void shellSort(vector<Log> &list) {
 }
 
 
+// Muestra la complejidad del algoritmo elegido
+void mostrarComplejidad(int opcion) {
+
+    cout << "Complejidad teorica:" << endl;
+
+    if (opcion == 1) {
+        cout << "Swap Sort - Mejor: O(n^2) | Peor: O(n^2)" << endl;
+    }
+    else if (opcion == 2) {
+        cout << "Bubble Sort - Mejor: O(n^2) | Peor: O(n^2)" << endl;
+    }
+    else if (opcion == 3) {
+        cout << "Selection Sort - Mejor: O(n^2) | Peor: O(n^2)" << endl;
+    }
+    else if (opcion == 4) {
+        cout << "Insertion Sort - Mejor: O(n) | Peor: O(n^2)" << endl;
+    }
+    else if (opcion == 5) {
+        cout << "Merge Sort - Mejor: O(n log n) | Peor: O(n log n)" << endl;
+    }
+    else if (opcion == 6) {
+        cout << "Quick Sort - Mejor: O(n log n) | Peor: O(n^2)" << endl;
+    }
+    else if (opcion == 7) {
+        cout << "Shell Sort - Depende de la secuencia de gaps utilizada" << endl;
+    }
+}
+
+// Guarda los logs ordenados en un archivo
+void guardarLogs(vector<Log> &logs) {
+
+    ofstream salida("output607.txt");
+
+    if (!salida.is_open()) {
+        cout << "Error al crear output607.txt" << endl;
+        return;
+    }
+
+    for (int i = 0; i < logs.size(); i++) {
+
+        salida << logs[i].mes << " "
+               << logs[i].dia << " "
+               << logs[i].anio << " "
+               << logs[i].hora << " "
+               << logs[i].ip
+               << logs[i].mensaje << endl;
+    }
+
+    salida.close();
+
+    cout << "Los logs ordenados se guardaron en output607.txt" << endl;
+}
+
+
 int main() {
 
     // ELEGIR ARCHIVO
@@ -401,6 +455,9 @@ int main() {
         chrono::duration_cast<chrono::nanoseconds>(fin - inicio);
 
 
+     // Guardamos los logs ya ordenados
+    guardarLogs(logs);
+
   
     // MOSTRAR RESULTADO
    
@@ -409,6 +466,8 @@ int main() {
     cout << "Ordenamiento terminado." << endl;
     cout << "Cantidad de logs: " << logs.size() << endl;
     cout << "Tiempo: " << tiempo.count() << " nanosegundos" << endl;
+
+    mostrarComplejidad(opcionAlgoritmo);
 
     cout << "Tu prediccion fue: " << prediccion << endl;
     cout << "Razon: " << razon << endl;
