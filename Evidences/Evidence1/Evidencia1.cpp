@@ -34,6 +34,27 @@ int main() {
 
     cout << "Archivo abierto correctamente." << endl;
 
+    // Vector donde vamos a guardar todos los logs del archivo
+    vector<Log> logs;
+
+    // Variable temporal para leer un log a la vez
+    Log registro;
+
+    // Leemos los datos de cada linea del archivo
+    while (archivo >> registro.mes >> registro.dia >> registro.anio
+                   >> registro.hora >> registro.ip) {
+
+        // Leemos el resto de la linea, que es el mensaje
+        getline(archivo, registro.mensaje);
+
+        // Guardamos el log completo en el vector
+        logs.push_back(registro);
+    }
+
+    // Mostramos cuantos logs se guardaron
+    cout << "Se leyeron " << logs.size() << " logs." << endl;
+
+    // Cerramos el archivo
     archivo.close();
 
     return 0;
