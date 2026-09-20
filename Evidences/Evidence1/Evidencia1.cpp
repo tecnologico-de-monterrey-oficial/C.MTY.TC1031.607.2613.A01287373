@@ -21,6 +21,24 @@ struct Log {
     string mensaje;
 };
 
+// Convierte el mes de letras a numero para poder comparar las fechas
+int mesANumero(string mes) {
+    if (mes == "Jan") return 1;
+    if (mes == "Feb") return 2;
+    if (mes == "Mar") return 3;
+    if (mes == "Apr") return 4;
+    if (mes == "May") return 5;
+    if (mes == "Jun") return 6;
+    if (mes == "Jul") return 7;
+    if (mes == "Aug") return 8;
+    if (mes == "Sep") return 9;
+    if (mes == "Oct") return 10;
+    if (mes == "Nov") return 11;
+    if (mes == "Dec") return 12;
+
+    return 0;
+}
+
 int main() {
 
     // Abrimos el archivo que contiene los logs
