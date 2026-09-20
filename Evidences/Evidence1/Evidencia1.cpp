@@ -1,5 +1,6 @@
 
 
+
 // Carolina Vildosola Guzman
 // A01287373
 
@@ -8,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <chrono>
+#include <cctype>
 
 using namespace std;
 
@@ -23,20 +25,31 @@ struct Log {
 };
 
 
-// Se convierte el mes de letras a numero
+// Convierte las primeras 3 letras del mes a numero
+// Acepta mayus y minus
 int mesANumero(string mes) {
-    if (mes == "Jan") return 1;
-    if (mes == "Feb") return 2;
-    if (mes == "Mar") return 3;
-    if (mes == "Apr") return 4;
-    if (mes == "May") return 5;
-    if (mes == "Jun") return 6;
-    if (mes == "Jul") return 7;
-    if (mes == "Aug") return 8;
-    if (mes == "Sep") return 9;
-    if (mes == "Oct") return 10;
-    if (mes == "Nov") return 11;
-    if (mes == "Dec") return 12;
+
+    if (mes.length() != 3) {
+        return 0;
+    }
+
+    // Convertimos las 3 letras a minusculas
+    for (int i = 0; i < 3; i++) {
+        mes[i] = tolower(mes[i]);
+    }
+
+    if (mes == "jan") return 1;
+    if (mes == "feb") return 2;
+    if (mes == "mar") return 3;
+    if (mes == "apr") return 4;
+    if (mes == "may") return 5;
+    if (mes == "jun") return 6;
+    if (mes == "jul") return 7;
+    if (mes == "aug") return 8;
+    if (mes == "sep") return 9;
+    if (mes == "oct") return 10;
+    if (mes == "nov") return 11;
+    if (mes == "dec") return 12;
 
     return 0;
 }
@@ -364,6 +377,48 @@ int buscarFin(vector<Log> &logs, Log fin) {
     return izquierda;
 }
 
+
+// Guarda en un archivo los logs encontrados dentro del rango
+void guardarRango(vector<Log> &logs, int inicio, int fin) {
+
+    ofstream salida("range607.txt");
+
+    if (!salida.is_open()) {
+        cout << "Error al crear range607.txt" << endl;
+        return;
+    }
+
+    // fin no se incluye porque buscarFin devuelve
+    // la primera posicion despues del rango
+    for (int i = inicio; i < fin; i++) {
+
+        salida << logs[i].mes << " "
+               << logs[i].dia << " "
+               << logs[i].anio << " "
+               << logs[i].hora << " "
+               << logs[i].ip
+               << logs[i].mensaje << endl;
+    }
+
+    salida.close();
+
+    cout << "El rango se guardo en range607.txt" << endl;
+}
+
+// Regresa el nombre del algoritmo elegido
+string nombreAlgoritmo(int opcion) {
+
+    if (opcion == 1) return "Swap Sort";
+    if (opcion == 2) return "Bubble Sort";
+    if (opcion == 3) return "Selection Sort";
+    if (opcion == 4) return "Insertion Sort";
+    if (opcion == 5) return "Merge Sort";
+    if (opcion == 6) return "Quick Sort";
+    if (opcion == 7) return "Shell Sort";
+
+    return "Desconocido";
+}
+
 int main() {
 
     int repetir = 1;
@@ -511,18 +566,153 @@ int main() {
 
   
     // MOSTRAR RESULTADO
-   
 
     cout << endl;
     cout << "Ordenamiento terminado." << endl;
+
+    cout << "Algoritmo usado: "
+     << nombreAlgoritmo(opcionAlgoritmo) << endl;
+
+    if (opcionArchivo == 1) {
+    cout << "Archivo usado: log607-1.txt" << endl;  
+    }   
+    else {
+    cout << "Archivo usado: log607-2.txt" << endl;
+    }
+
     cout << "Cantidad de logs: " << logs.size() << endl;
     cout << "Tiempo: " << tiempo.count() << " nanosegundos" << endl;
 
     mostrarComplejidad(opcionAlgoritmo);
 
-        cout << "Tu prediccion fue: " << prediccion << endl;
-        cout << "Razon: " << razon << endl;
+    cout << "Tu prediccion fue: " << prediccion << endl;
+    cout << "Razon: " << razon << endl;
 
+
+    // Comparamos el resultado con la prediccion del usuario
+    int coincidencia;
+
+    cout << endl;
+    cout << "El resultado coincidio con tu prediccion?" << endl;
+    cout << "1. Si" << endl;
+    cout << "2. No" << endl;
+    cout << "Opcion: ";
+    cin >> coincidencia;
+
+    if (coincidencia == 1) {
+        cout << "El resultado si coincidio con la prediccion inicial." << endl;
+    }
+    else if (coincidencia == 2) {
+        cout << "El resultado no coincidio con la prediccion inicial." << endl;
+    }
+    else {
+        cout << "Opcion no valida." << endl;
+    }
+        
+
+        // BUSCAR POR RANGO DE FECHA Y HORA
+
+    cout << endl;
+    cout << "Busqueda por rango de fecha y hora" << endl;
+
+    Log fechaInicio;
+    Log fechaFin;
+
+    // Solo necesitamos estos datos para comparar las fechas
+    fechaInicio.ip = "";
+    fechaInicio.mensaje = "";
+
+    fechaFin.ip = "";
+    fechaFin.mensaje = "";
+
+    cout << endl;
+    cout << "Escribe la fecha y hora inicial:" << endl;
+
+    cout << "Mes (primeras 3 letras, ej. Sep): ";
+    cin >> fechaInicio.mes;
+
+    cout << "Dia: ";
+    cin >> fechaInicio.dia;
+
+    cout << "Año: ";
+    cin >> fechaInicio.anio;
+
+    cout << "Hora (HH:MM:SS): ";
+    cin >> fechaInicio.hora;
+
+
+    cout << endl;
+    cout << "Escribe la fecha y hora final:" << endl;
+
+    cout << "Mes (primeras 3 letras, ej. Sep): ";
+    cin >> fechaFin.mes;
+
+    cout << "Dia: ";
+    cin >> fechaFin.dia;
+
+    cout << "Año: ";
+    cin >> fechaFin.anio;
+
+    cout << "Hora (HH:MM:SS): ";
+    cin >> fechaFin.hora;
+    
+    // Revisamos que los meses sean validos
+if (mesANumero(fechaInicio.mes) == 0 ||
+    mesANumero(fechaFin.mes) == 0) {
+
+    cout << endl;
+    cout << "Error: escribe el mes usando sus primeras 3 letras." << endl;
+}
+
+// Revisamos que la fecha inicial no sea posterior a la final
+else if (esMenor(fechaFin, fechaInicio)) {
+
+    cout << endl;
+    cout << "Error: la fecha inicial debe ser menor o igual a la fecha final."
+         << endl;
+}
+
+else {
+
+    // Busqueda binaria de los limites del rango
+    int posicionInicio = buscarInicio(logs, fechaInicio);
+    int posicionFin = buscarFin(logs, fechaFin);
+
+    cout << endl;
+
+    // Si las posiciones son iguales, no existen logs dentro del rango
+    if (posicionInicio >= posicionFin) {
+
+        cout << "No se encontraron logs dentro de ese rango." << endl;
+
+        // Creamos range607.txt vacio
+        guardarRango(logs, posicionInicio, posicionFin);
+    }
+
+    else {
+
+        cout << "Se encontraron "
+             << posicionFin - posicionInicio
+             << " logs dentro del rango." << endl;
+
+        cout << endl;
+        cout << "Logs encontrados:" << endl;
+
+        // Mostramos los logs encontrados
+        for (int i = posicionInicio; i < posicionFin; i++) {
+
+            cout << logs[i].mes << " "
+                 << logs[i].dia << " "
+                 << logs[i].anio << " "
+                 << logs[i].hora << " "
+                 << logs[i].ip
+                 << logs[i].mensaje << endl;
+        }
+
+        // Guardamos el resultado
+        guardarRango(logs, posicionInicio, posicionFin);
+    }
+}
         cout << endl;
         cout << "Deseas hacer otra corrida?" << endl;
         cout << "1. Si" << endl;
