@@ -1,4 +1,5 @@
 
+
 // Carolina Vildosola Guzman
 // A01287373
 
@@ -6,12 +7,12 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <chrono>
 
 using namespace std;
 
-// Un log es un registro de algo que paso en el sistema 
-// Cada linea del archivo es un log y guarda la fecha, hora, IP y lo que paso
-// Hacemos este struct para guardar juntos todos esos datos de cada log
+// Un log es un registro de algo que paso en el sistema
+// Cada linea guarda la fecha, hora, IP y lo que paso
 struct Log {
     string mes;
     int dia;
@@ -21,7 +22,8 @@ struct Log {
     string mensaje;
 };
 
-// Convierte el mes de letras a numero para poder comparar las fechas
+
+// Se convierte el mes de letras a numero
 int mesANumero(string mes) {
     if (mes == "Jan") return 1;
     if (mes == "Feb") return 2;
@@ -43,32 +45,254 @@ int mesANumero(string mes) {
 // Compara dos logs para saber cual paso primero
 bool esMenor(Log a, Log b) {
 
-    // Primero comparamos el año
     if (a.anio != b.anio) {
         return a.anio < b.anio;
     }
 
-    // Si el año es igual, comparamos el mes
     if (mesANumero(a.mes) != mesANumero(b.mes)) {
         return mesANumero(a.mes) < mesANumero(b.mes);
     }
 
-    // Si el mes tambien es igual, comparamos el dia
     if (a.dia != b.dia) {
         return a.dia < b.dia;
     }
 
-    // Si la fecha es igual, comparamos la hora
     return a.hora < b.hora;
+}
+
+
+// Intercambia dos logs
+void swapLogs(vector<Log> &list, int i, int j) {
+    if (i != j) {
+        Log aux = list[i];
+        list[i] = list[j];
+        list[j] = aux;
+    }
+}
+
+
+// SWAP SORT
+void swapSort(vector<Log> &list) {
+
+    int n = list.size();
+
+    for (int i = 0; i < n - 1; i++) {
+
+        for (int j = i + 1; j < n; j++) {
+
+            if (esMenor(list[j], list[i])) {
+                swapLogs(list, i, j);
+            }
+        }
+    }
+}
+
+
+// BUBBLE SORT
+void bubbleSort(vector<Log> &list) {
+
+    int n = list.size();
+
+    for (int i = 0; i < n - 1; i++) {
+
+        for (int j = 0; j < n - i - 1; j++) {
+
+            if (esMenor(list[j + 1], list[j])) {
+                swapLogs(list, j, j + 1);
+            }
+        }
+    }
+}
+
+
+// SELECTION SORT
+void selectionSort(vector<Log> &list) {
+
+    for (int i = 0; i < list.size() - 1; i++) {
+
+        int min = i;
+
+        for (int j = i + 1; j < list.size(); j++) {
+
+            if (esMenor(list[j], list[min])) {
+                min = j;
+            }
+        }
+
+        if (min != i) {
+            swapLogs(list, min, i);
+        }
+    }
+}
+
+
+// INSERTION SORT
+void insertionSort(vector<Log> &list) {
+
+    int n = list.size();
+
+    for (int i = 1; i < n; i++) {
+
+        Log key = list[i];
+        int j = i - 1;
+
+        while (j >= 0 && esMenor(key, list[j])) {
+            list[j + 1] = list[j];
+            j--;
+        }
+
+        list[j + 1] = key;
+    }
+}
+
+
+// MERGE
+void merge(vector<Log> &list, int left, int mid, int right) {
+
+    vector<Log> leftList;
+    vector<Log> rightList;
+
+    for (int i = left; i <= mid; i++) {
+        leftList.push_back(list[i]);
+    }
+
+    for (int i = mid + 1; i <= right; i++) {
+        rightList.push_back(list[i]);
+    }
+
+    int index = left;
+    int i = 0;
+    int j = 0;
+
+    while (i < leftList.size() && j < rightList.size()) {
+
+        if (esMenor(leftList[i], rightList[j])) {
+            list[index] = leftList[i];
+            i++;
+        }
+        else {
+            list[index] = rightList[j];
+            j++;
+        }
+
+        index++;
+    }
+
+    while (i < leftList.size()) {
+        list[index] = leftList[i];
+        i++;
+        index++;
+    }
+
+    while (j < rightList.size()) {
+        list[index] = rightList[j];
+        j++;
+        index++;
+    }
+}
+
+
+// MERGE SORT
+void mergeSort(vector<Log> &list, int left, int right) {
+
+    if (left < right) {
+
+        int mid = left + (right - left) / 2;
+
+        mergeSort(list, left, mid);
+        mergeSort(list, mid + 1, right);
+
+        merge(list, left, mid, right);
+    }
+}
+
+
+// PIVOTE PARA QUICK SORT
+int getPivot(vector<Log> &list, int left, int right) {
+
+    Log pivot = list[right];
+    int index = left;
+
+    for (int i = left; i < right; i++) {
+
+        if (esMenor(list[i], pivot)) {
+            swapLogs(list, i, index);
+            index++;
+        }
+    }
+
+    swapLogs(list, index, right);
+
+    return index;
+}
+
+
+// QUICK SORT
+void quickSort(vector<Log> &list, int left, int right) {
+
+    if (left < right) {
+
+        int pivot = getPivot(list, left, right);
+
+        quickSort(list, left, pivot - 1);
+        quickSort(list, pivot + 1, right);
+    }
+}
+
+
+// SHELL SORT
+void shellSort(vector<Log> &list) {
+
+    int n = list.size();
+
+    for (int gap = n / 2; gap > 0; gap = gap / 2) {
+
+        for (int i = gap; i < n; i++) {
+
+            Log temp = list[i];
+            int j = i;
+
+            while (j >= gap && esMenor(temp, list[j - gap])) {
+                list[j] = list[j - gap];
+                j = j - gap;
+            }
+
+            list[j] = temp;
+        }
+    }
 }
 
 
 int main() {
 
-    // Abrimos el archivo que contiene los logs
-    ifstream archivo("data/log607-1.txt");
+    // ELEGIR ARCHIVO
 
-    // Revisamos si el archivo se pudo abrir correctamente
+    int opcionArchivo;
+    string nombreArchivo;
+
+    cout << "Elige el archivo:" << endl;
+    cout << "1. log607-1.txt" << endl;
+    cout << "2. log607-2.txt" << endl;
+    cout << "Opcion: ";
+    cin >> opcionArchivo;
+
+    if (opcionArchivo == 1) {
+        nombreArchivo = "data/log607-1.txt";
+    }
+    else if (opcionArchivo == 2) {
+        nombreArchivo = "data/log607-2.txt";
+    }
+    else {
+        cout << "Opcion no valida." << endl;
+        return 1;
+    }
+
+
+    // ABRIR Y LEER ARCH
+
+
+    ifstream archivo(nombreArchivo);
+
     if (!archivo.is_open()) {
         cout << "Error: no se pudo abrir el archivo." << endl;
         return 1;
@@ -76,28 +300,119 @@ int main() {
 
     cout << "Archivo abierto correctamente." << endl;
 
-    // Vector donde vamos a guardar todos los logs del archivo
     vector<Log> logs;
-
-    // Variable temporal para leer un log a la vez
     Log registro;
 
-    // Leemos los datos de cada linea del archivo
     while (archivo >> registro.mes >> registro.dia >> registro.anio
                    >> registro.hora >> registro.ip) {
 
-        // Leemos el resto de la linea, que es el mensaje
         getline(archivo, registro.mensaje);
 
-        // Guardamos el log completo en el vector
         logs.push_back(registro);
     }
 
-    // Mostramos cuantos logs se guardaron
+    archivo.close();
+
     cout << "Se leyeron " << logs.size() << " logs." << endl;
 
-    // Cerramos el archivo
-    archivo.close();
+
+
+    // ELEGIR ALG
+
+
+    int opcionAlgoritmo;
+
+    cout << endl;
+    cout << "Elige el algoritmo de ordenamiento:" << endl;
+    cout << "1. Swap Sort" << endl;
+    cout << "2. Bubble Sort" << endl;
+    cout << "3. Selection Sort" << endl;
+    cout << "4. Insertion Sort" << endl;
+    cout << "5. Merge Sort" << endl;
+    cout << "6. Quick Sort" << endl;
+    cout << "7. Shell Sort" << endl;
+    cout << "Opcion: ";
+
+    cin >> opcionAlgoritmo;
+
+    // PREDICCION
+
+
+    string prediccion;
+
+    cout << endl;
+    cout << "Antes de ordenar, escribe tu prediccion." << endl;
+    cout << "Crees que sera rapido o lento?: ";
+    cin >> prediccion;
+
+    cin.ignore();
+
+    string razon;
+
+    cout << "Por que?: ";
+    getline(cin, razon);
+
+
+    // MEDIR TIEMPO
+  
+
+    auto inicio = chrono::high_resolution_clock::now();
+
+
+    // Ejecutamos el algoritmo elegido
+
+    if (opcionAlgoritmo == 1) {
+        swapSort(logs);
+    }
+
+    else if (opcionAlgoritmo == 2) {
+        bubbleSort(logs);
+    }
+
+    else if (opcionAlgoritmo == 3) {
+        selectionSort(logs);
+    }
+
+    else if (opcionAlgoritmo == 4) {
+        insertionSort(logs);
+    }
+
+    else if (opcionAlgoritmo == 5) {
+        mergeSort(logs, 0, logs.size() - 1);
+    }
+
+    else if (opcionAlgoritmo == 6) {
+        quickSort(logs, 0, logs.size() - 1);
+    }
+
+    else if (opcionAlgoritmo == 7) {
+        shellSort(logs);
+    }
+
+    else {
+        cout << "Algoritmo no valido." << endl;
+        return 1;
+    }
+
+
+    auto fin = chrono::high_resolution_clock::now();
+
+    auto tiempo =
+        chrono::duration_cast<chrono::nanoseconds>(fin - inicio);
+
+
+  
+    // MOSTRAR RESULTADO
+   
+
+    cout << endl;
+    cout << "Ordenamiento terminado." << endl;
+    cout << "Cantidad de logs: " << logs.size() << endl;
+    cout << "Tiempo: " << tiempo.count() << " nanosegundos" << endl;
+
+    cout << "Tu prediccion fue: " << prediccion << endl;
+    cout << "Razon: " << razon << endl;
+
 
     return 0;
 }
