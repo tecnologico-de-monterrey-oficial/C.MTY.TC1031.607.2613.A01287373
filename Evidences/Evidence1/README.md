@@ -56,5 +56,5 @@ Las IAs utilizadas fueron: Copilot y ChatGPT
 
 Video
 
-Liga:
+Liga: https://drive.google.com/file/d/1S0iW2v2tv0bMOwr4lUtPCG2042346fbJ/view?usp=drivesdk 
 
