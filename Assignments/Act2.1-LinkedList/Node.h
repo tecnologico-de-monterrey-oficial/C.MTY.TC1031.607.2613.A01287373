@@ -1,3 +1,9 @@
+
+
+
+// Carolina Vildósola Guzmán
+// A01287373
+
 #pragma once
 
 template <typename T>
@@ -9,6 +15,3 @@ struct Node {
     Node(const T& value, Node<T>* nextNode) : data(value), next(nextNode) {} 
 };
 
-
-// Carolina Vildósola Guzmán
-// A01287373
