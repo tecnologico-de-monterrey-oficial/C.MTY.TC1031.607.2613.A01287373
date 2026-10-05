@@ -10,9 +10,9 @@ En esta actividad se hizo una lista encadenada usando templates para que pudiera
 
 ## Archivos
 
-- `Node.h`: aquí esta la estructura de los nodos, donde se guarda el dato y el apuntador al siguiente nodo
-- `LinkedList.h`: aquí estan las funciones y operaciones de la lista encadenada
-- `main.cpp`: aquí esta el programa principal, donde fui probando las diferentes funciones con enteros y strings.
+- Node.h: aquí esta la estructura de los nodos, donde se guarda el dato y el apuntador al siguiente nodo
+- LinkedList.h: aquí estan las funciones y operaciones de la lista encadenada
+- main.cpp: aquí esta el programa principal, donde fui probando las diferentes funciones con enteros y strings.
 
 ## Funciones 
 
@@ -32,7 +32,7 @@ En la lista se pueden hacer diferentes operaciones como:
 
 ## Templates
 
-Use `template <typename T>` para poder usar la misma lista con diferentes tipos de datos para no tener que hacer una lista diferente para cada uno, y para comprobar que esto funcionara hice pruebas utilizando "int" y "string"
+Use template <typename T> para poder usar la misma lista con diferentes tipos de datos para no tener que hacer una lista diferente para cada uno, y para comprobar que esto funcionara hice pruebas utilizando "int" y "string"
 
 ## Prompts utilizados
 
