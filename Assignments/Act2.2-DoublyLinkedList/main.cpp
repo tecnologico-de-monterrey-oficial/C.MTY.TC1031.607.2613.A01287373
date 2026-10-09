@@ -1,4 +1,3 @@
-
 // Caro Vildósola A01287373
 
 #include <iostream>
@@ -11,25 +10,30 @@
 using namespace std;
 
 
-// funcion para crear datos aleatorios
+// randomData
+
 template <typename T>
 T randomData();
 
 template <>
 int randomData<int>() {
+    // generamos un numero del 1 al 100
     return rand() % 100 + 1;
 }
 
 template <>
 string randomData<string>() {
-    string nombres[] = {"Ana", "Luis", "Sofia", "Pedro", "Maria"};
+    // usamos estos nombres para los datos aleatorios
+    string nombres[] = {"Caro", "David", "Dani", "Alonso", "Vale"};
     return nombres[rand() % 5];
 }
 
 
-// funcion para crear y manejar la lista
+// menuLista
+
 template <typename T>
 void menuLista() {
+    // creamos nuestras listas
     DoublyLinkedList<T> lista;
     DoublyLinkedList<T> otraLista;
 
@@ -40,39 +44,45 @@ void menuLista() {
     T dato;
     T nuevoDato;
 
-    // preguntamos como quiere crear la lista
-    cout << "\nComo quieres crear la lista?" << endl;
-    cout << "1. Datos capturados" << endl;
-    cout << "2. Datos aleatorios" << endl;
-    cout << "Opcion: ";
+    // preguntamos como quiere agregar los datos
+    cout << "\nComo quieres agregar los datos?" << endl;
+    cout << "1. Escribirlos yo" << endl;
+    cout << "2. Que se generen solos" << endl;
+    cout << "Elige una opcion: ";
     cin >> tipo;
 
-    // pedimos la cantidad de elementos
-    cout << "Cuantos elementos quieres agregar? ";
+    // revisamos que la opcion sea valida
+    if (tipo != 1 && tipo != 2) {
+        cout << "Esa opcion no existe" << endl;
+        return;
+    }
+
+    // preguntamos cuantos datos quiere
+    cout << "Cuantos datos quieres poner? ";
     cin >> cantidad;
 
-    // validamos la cantidad
+    // revisamos que la cantidad sea valida
     if (cantidad < 0) {
         cout << "Cantidad invalida" << endl;
         return;
     }
 
-    // agregamos los elementos
+    // agregamos los datos a la lista
     for (int i = 0; i < cantidad; i++) {
         if (tipo == 1) {
+            // pedimos el dato
             cout << "Dato " << i + 1 << ": ";
             cin >> dato;
-        } else if (tipo == 2) {
-            dato = randomData<T>();
         } else {
-            cout << "Opcion invalida" << endl;
-            return;
+            // generamos un dato aleatorio
+            dato = randomData<T>();
         }
 
+        // agregamos el dato al final
         lista.addLast(dato);
     }
 
-    cout << "\nLista creada: ";
+    cout << "\nAsi quedo tu lista: ";
     lista.print();
 
     // mostramos el menu
@@ -97,158 +107,162 @@ void menuLista() {
         cout << "17. Mostrar lista" << endl;
         cout << "18. Salir" << endl;
 
-        cout << "Opcion: ";
+        cout << "Elige una opcion: ";
         cin >> opcion;
 
-        // usamos try para manejar indices invalidos
+        // usamos try por si hay un indice invalido
         try {
             switch (opcion) {
 
                 case 1:
-                    // agregamos al principio
-                    cout << "Dato a agregar: ";
+                    // addFirst
+                    cout << "Que dato quieres agregar? ";
                     cin >> dato;
                     lista.addFirst(dato);
-                    cout << "Dato agregado" << endl;
+                    cout << "Listo, se agrego el dato" << endl;
                     break;
 
                 case 2:
-                    // agregamos al final
-                    cout << "Dato a agregar: ";
+                    // addLast
+                    cout << "Que dato quieres agregar? ";
                     cin >> dato;
                     lista.addLast(dato);
-                    cout << "Dato agregado" << endl;
+                    cout << "Listo, se agrego el dato" << endl;
                     break;
 
                 case 3:
-                    // insertamos despues de un indice
-                    cout << "Indice: ";
+                    // insert
+                    cout << "Despues de que indice quieres agregarlo? ";
                     cin >> index;
-                    cout << "Dato a insertar: ";
+                    cout << "Que dato quieres insertar? ";
                     cin >> dato;
                     lista.insert(index, dato);
-                    cout << "Dato insertado" << endl;
+                    cout << "Listo, se inserto el dato" << endl;
                     break;
 
                 case 4:
-                    // borramos un dato
-                    cout << "Dato a borrar: ";
+                    // deleteData
+                    cout << "Que dato quieres borrar? ";
                     cin >> dato;
 
                     if (lista.deleteData(dato)) {
-                        cout << "Dato borrado" << endl;
+                        cout << "Listo, se borro el dato" << endl;
                     } else {
-                        cout << "No se encontro el dato" << endl;
+                        cout << "Ese dato no esta en la lista" << endl;
                     }
                     break;
 
                 case 5:
-                    // borramos por posicion
-                    cout << "Indice a borrar: ";
+                    // deleteAt
+                    cout << "En que posicion quieres borrar? ";
                     cin >> index;
 
                     if (lista.deleteAt(index)) {
-                        cout << "Dato borrado" << endl;
+                        cout << "Listo, se borro el dato" << endl;
                     } else {
-                        cout << "Indice invalido" << endl;
+                        cout << "Esa posicion no existe" << endl;
                     }
                     break;
 
                 case 6:
-                    // obtenemos un dato
-                    cout << "Indice: ";
+                    // getData
+                    cout << "De que posicion quieres ver el dato? ";
                     cin >> index;
-                    cout << "Dato: " << lista.getData(index) << endl;
+                    cout << "El dato es: " << lista.getData(index) << endl;
                     break;
 
                 case 7:
-                    // actualizamos un dato
-                    cout << "Dato a buscar: ";
+                    // updateData
+                    cout << "Que dato quieres cambiar? ";
                     cin >> dato;
-                    cout << "Nuevo dato: ";
+                    cout << "Por que dato lo quieres cambiar? ";
                     cin >> nuevoDato;
+
                     lista.updateData(dato, nuevoDato);
-                    cout << "Dato actualizado" << endl;
+                    cout << "Listo, se cambio el dato" << endl;
                     break;
 
                 case 8:
-                    // actualizamos por posicion
-                    cout << "Indice: ";
+                    // updateAt
+                    cout << "En que posicion quieres cambiar el dato? ";
                     cin >> index;
-                    cout << "Nuevo dato: ";
+                    cout << "Por que dato lo quieres cambiar? ";
                     cin >> nuevoDato;
+
                     lista.updateAt(index, nuevoDato);
-                    cout << "Dato actualizado" << endl;
+                    cout << "Listo, se cambio el dato" << endl;
                     break;
 
                 case 9:
-                    // buscamos un dato
-                    cout << "Dato a buscar: ";
+                    // findData
+                    cout << "Que dato quieres buscar? ";
                     cin >> dato;
 
                     index = lista.findData(dato);
 
                     if (index == -1) {
-                        cout << "No se encontro el dato" << endl;
+                        cout << "Ese dato no esta en la lista" << endl;
                     } else {
-                        cout << "Se encontro en el indice: " << index << endl;
+                        cout << "Esta en el indice: " << index << endl;
                     }
                     break;
 
                 case 10:
-                    // leemos usando []
-                    cout << "Indice: ";
+                    // operator[]
+                    cout << "De que posicion quieres ver el dato? ";
                     cin >> index;
-                    cout << "Dato: " << lista[index] << endl;
+                    cout << "El dato es: " << lista[index] << endl;
                     break;
 
                 case 11:
-                    // actualizamos usando []
-                    cout << "Indice: ";
+                    // operator[]
+                    cout << "En que posicion quieres cambiar el dato? ";
                     cin >> index;
-                    cout << "Nuevo dato: ";
+                    cout << "Por que dato lo quieres cambiar? ";
                     cin >> nuevoDato;
+
                     lista[index] = nuevoDato;
-                    cout << "Dato actualizado" << endl;
+                    cout << "Listo, se cambio el dato" << endl;
                     break;
 
                 case 12:
-                    // copiamos la lista usando =
+                    // operator=
+                    // copiamos los datos a otra lista
                     otraLista = lista;
 
-                    cout << "Lista copiada: ";
+                    cout << "Asi quedo la lista copiada: ";
                     otraLista.print();
                     break;
 
                 case 13:
-                    // limpiamos la lista
+                    // clear
                     lista.clear();
-                    cout << "Lista vacia" << endl;
+                    cout << "Listo, la lista esta vacia" << endl;
                     break;
 
                 case 14:
-                    // ordenamos la lista
+                    // sort
                     lista.sort();
-                    cout << "Lista ordenada" << endl;
+                    cout << "Listo, se ordeno la lista" << endl;
                     break;
 
                 case 15:
-                    // duplicamos cada elemento
+                    // duplicate
                     lista.duplicate();
-                    cout << "Elementos duplicados" << endl;
+                    cout << "Listo, se duplicaron los datos" << endl;
                     break;
 
                 case 16:
-                    // eliminamos los duplicados
+                    // removeDuplicates
                     lista.removeDuplicates();
-                    cout << "Duplicados eliminados" << endl;
+                    cout << "Listo, se quitaron los repetidos" << endl;
                     break;
 
                 case 17:
-                    // mostramos la lista
-                    cout << "Lista: ";
+                    // print
+                    cout << "Tu lista es: ";
                     lista.print();
-                    cout << "Cantidad de elementos: " << lista.getSize() << endl;
+                    cout << "Tiene " << lista.getSize() << " elementos" << endl;
                     break;
 
                 case 18:
@@ -256,16 +270,17 @@ void menuLista() {
                     break;
 
                 default:
-                    cout << "Opcion invalida" << endl;
+                    cout << "Esa opcion no existe" << endl;
             }
 
-            // mostramos la lista despues de cada operacion
+            // mostramos como quedo la lista
             if (opcion >= 1 && opcion <= 16 && opcion != 12) {
-                cout << "Lista actual: ";
+                cout << "Asi quedo la lista: ";
                 lista.print();
             }
 
         } catch (out_of_range& error) {
+            // mostramos el error si la posicion no existe
             cout << "Error: " << error.what() << endl;
         }
 
@@ -273,26 +288,30 @@ void menuLista() {
 }
 
 
-// funcion principal
+// main
+
 int main() {
+    // iniciamos los numeros aleatorios
     srand(time(0));
 
     int opcion;
 
     do {
-        cout << "\n----- DOUBLY LINKED LIST -----" << endl;
+        cout << "\n DOUBLY LINKED LIST " << endl;
         cout << "1. Lista de enteros" << endl;
         cout << "2. Lista de strings" << endl;
         cout << "3. Salir" << endl;
-        cout << "Opcion: ";
+        cout << "Elige una opcion: ";
         cin >> opcion;
 
         switch (opcion) {
             case 1:
+                // creamos una lista de numeros
                 menuLista<int>();
                 break;
 
             case 2:
+                // creamos una lista de palabras
                 menuLista<string>();
                 break;
 
@@ -301,7 +320,7 @@ int main() {
                 break;
 
             default:
-                cout << "Opcion invalida" << endl;
+                cout << "Esa opcion no existe" << endl;
         }
 
     } while (opcion != 3);

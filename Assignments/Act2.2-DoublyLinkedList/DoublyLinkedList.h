@@ -62,195 +62,205 @@ public:
 };
 
 
-// AGREGAR AL PRINCIPIO
+// addFirst
 
 template <typename T>
 void DoublyLinkedList<T>::addFirst(T data) {
-    // validamos si la lista está vacía
+    // vemos si la lista está vacía
     if (head == nullptr) {
-        // apuntamos head a un nuevo nodo
+        // creamos el primer nodo
         head = new NodeD<T>(data);
-        // apuntamos tail a head
+
+        // como es el único, también es el último
         tail = head;
-        // incrementamos size
+
+        // aumentamos el tamaño
         size++;
     } else {
-        // creamos un nuevo nodo
+        // creamos un nodo nuevo
         NodeD<T>* aux = new NodeD<T>(data);
-        // apuntamos el next de aux a head
+
+        // conectamos el nuevo nodo con el primero
         aux->next = head;
-        // apuntamos el prev de head a aux
         head->prev = aux;
-        // actualizamos head
+
+        // ahora el nuevo nodo es el primero
         head = aux;
-        // incrementamos size
+
+        // aumentamos el tamaño
         size++;
     }
 }
 
 
-// AGREGAR AL FINAL
+// addLast
 
 template <typename T>
 void DoublyLinkedList<T>::addLast(T data) {
-    // validamos si la lista está vacía
+    // vemos si la lista está vacía
     if (head == nullptr) {
-        // apuntamos head a un nuevo nodo
+        // creamos el primer nodo
         head = new NodeD<T>(data);
-        // apuntamos tail a head
+
+        // como es el único, también es el último
         tail = head;
-        // incrementamos size
+
+        // aumentamos el tamaño
         size++;
     } else {
-        // creamos un nuevo nodo
+        // creamos un nodo nuevo
         NodeD<T>* aux = new NodeD<T>(data);
-        // apuntamos el prev de aux a tail
+
+        // conectamos el nuevo nodo con el último
         aux->prev = tail;
-        // apuntamos el next de tail a aux
         tail->next = aux;
-        // actualizamos tail
+
+        // ahora el nuevo nodo es el último
         tail = aux;
-        // incrementamos size
+
+        // aumentamos el tamaño
         size++;
     }
 }
 
 
-// INSERTAR DESPUES DE UN INDICE
+// insert
 
 template <typename T>
 void DoublyLinkedList<T>::insert(int index, T data) {
-    // validamos que el índice sea válido
+    // revisamos que el índice exista
     if (index >= 0 && index < size) {
 
-        // validamos si queremos insertar después del último
+        // si es el último, agregamos al final
         if (index == size - 1) {
             addLast(data);
         } else {
-            // creamos un apuntador auxiliar
+            // empezamos desde el primer nodo
             NodeD<T>* aux = head;
 
-            // recorremos hasta llegar al índice
+            // avanzamos hasta encontrar el índice
             for (int i = 0; i < index; i++) {
                 aux = aux->next;
             }
 
-            // creamos un nuevo nodo
+            // creamos el nodo nuevo
             NodeD<T>* auxNew = new NodeD<T>(data);
 
-            // actualizamos los apuntadores del nuevo nodo
+            // conectamos el nuevo nodo con los demás
             auxNew->prev = aux;
             auxNew->next = aux->next;
 
-            // actualizamos los apuntadores de los otros nodos
+            // actualizamos las conexiones
             aux->next->prev = auxNew;
             aux->next = auxNew;
 
-            // incrementamos size
+            // aumentamos el tamaño
             size++;
         }
 
     } else {
+        // si el índice no existe, mostramos un error
         throw out_of_range("Indice invalido");
     }
 }
 
 
-// BORRAR POR POSICION
+// deleteAt
 
 template <typename T>
 bool DoublyLinkedList<T>::deleteAt(int index) {
-    // validamos que el índice sea válido
+    // revisamos que el índice exista
     if (index < 0 || index >= size) {
         return false;
     }
 
-    // validamos si solo hay un elemento
+    // vemos si solo hay un elemento
     if (head == tail) {
-        // creamos un nodo auxiliar
+        // guardamos el nodo que vamos a borrar
         NodeD<T>* aux = head;
 
-        // apuntamos head y tail a nullptr
+        // dejamos la lista vacía
         head = nullptr;
         tail = nullptr;
 
-        // borramos aux
+        // borramos el nodo
         delete aux;
 
-        // decrementamos size
+        // disminuimos el tamaño
         size--;
         return true;
     }
 
-    // validamos si queremos borrar el primero
+    // vemos si queremos borrar el primero
     if (index == 0) {
-        // creamos un nodo auxiliar
+        // guardamos el primer nodo
         NodeD<T>* aux = head;
 
-        // actualizamos head
+        // ahora el segundo nodo sera el primero
         head = head->next;
         head->prev = nullptr;
 
-        // borramos aux
+        // borramos el nodo anterior
         delete aux;
 
-        // decrementamos size
+        // disminuimos el tamaño
         size--;
         return true;
     }
 
-    // validamos si queremos borrar el último
+    // vemos si queremos borrar el ultimo
     if (index == size - 1) {
-        // creamos un nodo auxiliar
+        // guardamos el último nodo
         NodeD<T>* aux = tail;
 
-        // actualizamos tail
+        // ahora el anterior será el ultimo
         tail = tail->prev;
         tail->next = nullptr;
 
-        // borramos aux
+        // borramos el nodo
         delete aux;
 
-        // decrementamos size
+        // disminuimos el tamaño
         size--;
         return true;
     }
 
-    // si no es el primero ni el último, borramos uno de en medio
+    // si está en medio, buscamos el nodo
     NodeD<T>* aux = head;
 
-    // recorremos hasta llegar a la posición
+    // avanzamos hasta llegar a la posición
     for (int i = 0; i < index; i++) {
         aux = aux->next;
     }
 
-    // actualizamos los apuntadores
+    // conectamos el nodo anterior con el siguiente
     aux->prev->next = aux->next;
     aux->next->prev = aux->prev;
 
-    // borramos aux
+    // borramos el nodo
     delete aux;
 
-    // decrementamos size
+    // disminuimos el tamaño
     size--;
     return true;
 }
 
 
-// BUSCAR UN DATO
+// findData
 
 template <typename T>
 int DoublyLinkedList<T>::findData(T data) {
-    // creamos un apuntador auxiliar
+    // empezamos desde el primer nodo
     NodeD<T>* aux = head;
 
-    // inicializamos un índice auxiliar
+    // empezamos contando desde el indice 0
     int auxIndex = 0;
 
     // recorremos la lista
     while (aux != nullptr) {
-        // validamos si encontramos el dato
+        // vemos si encontramos el dato
         if (aux->data == data) {
+            // regresamos su posición
             return auxIndex;
         }
 
@@ -259,19 +269,19 @@ int DoublyLinkedList<T>::findData(T data) {
         auxIndex++;
     }
 
-    // si no encontramos el dato regresamos -1
+    // si no existe regresamos 1
     return -1;
 }
 
 
-// BORRAR UN DATO
+// deleteData
 
 template <typename T>
 bool DoublyLinkedList<T>::deleteData(T data) {
-    // buscamos la posición del dato
+    // buscamos en cual posición está el dato
     int index = findData(data);
 
-    // validamos si encontramos el dato
+    // vemos si encontramos el dato
     if (index == -1) {
         return false;
     }
@@ -281,40 +291,40 @@ bool DoublyLinkedList<T>::deleteData(T data) {
 }
 
 
-// OBTENER UN DATO POR POSICION
+// getData
 
 template <typename T>
 T DoublyLinkedList<T>::getData(int index) {
-    // validamos que el índice sea válido
+    // revisamos que el índice exista
     if (index < 0 || index >= size) {
         throw out_of_range("Indice invalido");
     }
 
-    // creamos un apuntador auxiliar
+    // empezamos desde el primer nodo
     NodeD<T>* aux = head;
 
-    // recorremos hasta llegar a la posición
+    // avanzamos hasta llegar a la posición
     for (int i = 0; i < index; i++) {
         aux = aux->next;
     }
 
-    // regresamos el dato
+    // regresamos el dato que encontramos
     return aux->data;
 }
 
 
-// ACTUALIZAR UN DATO
+// updateData
 
 template <typename T>
 void DoublyLinkedList<T>::updateData(T data, T newData) {
-    // creamos un apuntador auxiliar
+    // empezamos desde el primer nodo
     NodeD<T>* aux = head;
 
     // recorremos la lista
     while (aux != nullptr) {
-        // validamos si encontramos el dato
+        // vemos si encontramos el dato
         if (aux->data == data) {
-            // actualizamos el dato
+            // cambiamos el dato por el nuevo
             aux->data = newData;
             return;
         }
@@ -323,72 +333,72 @@ void DoublyLinkedList<T>::updateData(T data, T newData) {
         aux = aux->next;
     }
 
-    // si no encontramos el dato
+    // si no encontramos el dato, mostramos un error
     throw out_of_range("No se encontro el dato");
 }
 
 
-// ACTUALIZAR POR POSICION
+// updateAt
 
 template <typename T>
 void DoublyLinkedList<T>::updateAt(int index, T newData) {
-    // validamos que el índice sea válido
+    // revisamos que el índice exista
     if (index < 0 || index >= size) {
         throw out_of_range("Indice invalido");
     }
 
-    // creamos un apuntador auxiliar
+    // empezamos desde el primer nodo
     NodeD<T>* aux = head;
 
-    // recorremos hasta llegar a la posición
+    // avanzamos hasta llegar a la posición
     for (int i = 0; i < index; i++) {
         aux = aux->next;
     }
 
-    // actualizamos el dato
+    // cambiamos el dato por el nuevo
     aux->data = newData;
 }
 
 
-// OPERADOR []
+// operator[]
 
 template <typename T>
 T& DoublyLinkedList<T>::operator[](int index) {
-    // validamos que el índice sea válido
+    // revisamos que el indice exista
     if (index < 0 || index >= size) {
         throw out_of_range("Indice invalido");
     }
 
-    // creamos un apuntador auxiliar
+    // empezamos desde el primer nodo
     NodeD<T>* aux = head;
 
-    // recorremos hasta llegar a la posición
+    // avanzamos hasta llegar a la posición
     for (int i = 0; i < index; i++) {
         aux = aux->next;
     }
 
-    // regresamos el dato para poder leerlo o cambiarlo
+    // regresamos el dato para leerlo o cambiarlo
     return aux->data;
 }
 
 
-// OPERADOR =
+// operator=
 
 template <typename T>
 DoublyLinkedList<T>& DoublyLinkedList<T>::operator=(
     const DoublyLinkedList<T>& other) {
 
-    // validamos que no sea la misma lista
+    // revisamos que no sea la misma lista
     if (this != &other) {
-        // limpiamos la lista actual
+        // borramos los datos que teníamos
         clear();
 
-        // creamos un apuntador a la otra lista
+        // empezamos desde el primer nodo de la otra lista
         NodeD<T>* aux = other.head;
 
         // recorremos la otra lista
         while (aux != nullptr) {
-            // agregamos cada dato a nuestra lista
+            // copiamos cada dato
             addLast(aux->data);
 
             // avanzamos al siguiente nodo
@@ -396,24 +406,24 @@ DoublyLinkedList<T>& DoublyLinkedList<T>::operator=(
         }
     }
 
-    // regresamos la lista actual
+    // regresamos nuestra lista
     return *this;
 }
 
 
-// LIMPIAR LA LISTA
+// clear
 
 template <typename T>
 void DoublyLinkedList<T>::clear() {
-    // recorremos mientras haya nodos
+    // recorremos mientras todavia haya nodos
     while (head != nullptr) {
-        // creamos un nodo auxiliar
+        // guardamos el primer nodo
         NodeD<T>* aux = head;
 
-        // avanzamos head
+        // avanzamos al siguiente nodo
         head = head->next;
 
-        // borramos aux
+        // borramos el nodo anterior
         delete aux;
     }
 
@@ -424,11 +434,11 @@ void DoublyLinkedList<T>::clear() {
 }
 
 
-// ORDENAR LA LISTA
+// sort
 
 template <typename T>
 void DoublyLinkedList<T>::sort() {
-    // validamos si hay más de un elemento
+    // vemos si hay suficientes datos para ordenar
     if (size < 2) {
         return;
     }
@@ -440,9 +450,9 @@ void DoublyLinkedList<T>::sort() {
         // recorremos los elementos
         for (int j = 0; j < size - i - 1; j++) {
 
-            // comparamos el dato actual con el siguiente
+            // comparamos el dato con el siguiente
             if (aux->data > aux->next->data) {
-                // intercambiamos los datos
+                // si están al revés, los cambiamos
                 swap(aux->data, aux->next->data);
             }
 
@@ -453,34 +463,35 @@ void DoublyLinkedList<T>::sort() {
 }
 
 
-// DUPLICAR CADA ELEMENTO
+// duplicate
 
 template <typename T>
 void DoublyLinkedList<T>::duplicate() {
-    // creamos un apuntador auxiliar
+    // empezamos desde el primer nodo
     NodeD<T>* aux = head;
 
     // recorremos la lista
     while (aux != nullptr) {
-        // creamos un nodo con el mismo dato
+        // creamos otro nodo con el mismo dato
         NodeD<T>* nuevo = new NodeD<T>(aux->data);
 
-        // apuntamos el nuevo nodo después de aux
+        // ponemos el nuevo nodo después del original
         nuevo->next = aux->next;
         nuevo->prev = aux;
 
-        // validamos si hay un nodo después
+        // vemos si hay otro nodo después
         if (aux->next != nullptr) {
+            // conectamos el siguiente con el nuevo
             aux->next->prev = nuevo;
         } else {
-            // si era el último actualizamos tail
+            // si era el último, actualizamos tail
             tail = nuevo;
         }
 
-        // actualizamos el next de aux
+        // conectamos el original con el nuevo
         aux->next = nuevo;
 
-        // incrementamos size
+        // aumentamos el tamaño
         size++;
 
         // avanzamos al siguiente dato original
@@ -489,39 +500,40 @@ void DoublyLinkedList<T>::duplicate() {
 }
 
 
-// ELIMINAR DATOS DUPLICADOS
+// removeDuplicates
 
 template <typename T>
 void DoublyLinkedList<T>::removeDuplicates() {
     // primero ordenamos la lista
     sort();
 
-    // creamos un apuntador auxiliar
+    // empezamos desde el 1er nodo
     NodeD<T>* aux = head;
 
     // recorremos la lista
     while (aux != nullptr && aux->next != nullptr) {
 
-        // validamos si dos datos seguidos son iguales
+        // vemos si el dato es igual al siguiente
         if (aux->data == aux->next->data) {
-            // guardamos el nodo que vamos a borrar
+            // guardamos el nodo repetido
             NodeD<T>* borrar = aux->next;
 
-            // actualizamos el next de aux
+            // conectamos aux con el nodo que sigue
             aux->next = borrar->next;
 
-            // validamos si hay otro nodo después
+            // vemos si hay otro nodo después
             if (borrar->next != nullptr) {
+                // actualizamos su conexión anterior
                 borrar->next->prev = aux;
             } else {
-                // si borramos el último actualizamos tail
+                // si borramos el último, actualizamos tail
                 tail = aux;
             }
 
-            // borramos el nodo repetido
+            // borramos el dato repetido
             delete borrar;
 
-            // decrementamos size
+            // disminuimos el tamaño
             size--;
         } else {
             // avanzamos al siguiente nodo
@@ -531,11 +543,11 @@ void DoublyLinkedList<T>::removeDuplicates() {
 }
 
 
-// MOSTRAR LA LISTA
+// print
 
 template <typename T>
 void DoublyLinkedList<T>::print() {
-    // creamos un apuntador auxiliar
+    // empezamos desde el 1er nodo
     NodeD<T>* aux = head;
 
     // recorremos la lista
@@ -543,10 +555,10 @@ void DoublyLinkedList<T>::print() {
         // mostramos el dato
         cout << aux->data;
 
-        // avanzamos al siguiente nodo
+        // avanzamos al sig nodo
         aux = aux->next;
 
-        // mostramos un separador si hay otro dato
+        // si hay otro dato, mostramos un separador
         if (aux != nullptr) {
             cout << " - ";
         }
@@ -556,19 +568,20 @@ void DoublyLinkedList<T>::print() {
 }
 
 
-// OBTENER EL TAMAÑO
+// getSize
 
 template <typename T>
 int DoublyLinkedList<T>::getSize() {
+    // regresamos la cantidad de elementos
     return size;
 }
 
 
-// DESTRUCTOR
+// destructor
 
 template <typename T>
 DoublyLinkedList<T>::~DoublyLinkedList() {
-    // liberamos los nodos cuando se termina de usar la lista
+    // borramos los nodos cuando dejamos de usar la lista
     clear();
 }
 
