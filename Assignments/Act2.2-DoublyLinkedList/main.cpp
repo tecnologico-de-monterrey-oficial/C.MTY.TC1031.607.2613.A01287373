@@ -87,7 +87,7 @@ void menuLista() {
 
     // mostramos el menu
     do {
-        cout << "\n----- MENU DOUBLY LINKED LIST -----" << endl;
+        cout << "\n Qué quieres hacer? " << endl;
         cout << "1. Agregar al principio" << endl;
         cout << "2. Agregar al final" << endl;
         cout << "3. Insertar despues de un indice" << endl;
@@ -327,3 +327,6 @@ int main() {
 
     return 0;
 }
+
+
+// fin
