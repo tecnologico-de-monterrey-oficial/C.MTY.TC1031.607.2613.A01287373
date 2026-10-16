@@ -7,9 +7,12 @@
 #include <string>
 #include <iomanip>
 #include <cctype>
+#include <chrono>
+#include <cmath>
 
 #include "../include/Queue.h"
 #include "../include/Log.h"
+#include "../include/DoublyLinkedList.h"
 
 using namespace std;
 
@@ -129,9 +132,201 @@ bool convertirLog(const string& linea, Log& log, string& motivo) {
     return true;
 }
 
+// Revisamos si los registros ya estan ordenados
+bool estaOrdenada(DoublyLinkedList<Log>& lista) {
+    NodeD<Log>* actual = lista.getNode(0);
+
+    while (actual != nullptr && actual->next != nullptr) {
+        if (actual->next->data < actual->data) {
+            return false;
+        }
+
+        actual = actual->next;
+    }
+
+    return true;
+}
+
+// Cambiamos los datos de dos nodos
+void intercambiar(NodeD<Log>* a, NodeD<Log>* b) {
+    Log temporal = a->data;
+    a->data = b->data;
+    b->data = temporal;
+}
+
+// Buscamos el nodo de en medio
+NodeD<Log>* buscarMedio(NodeD<Log>* inicio, NodeD<Log>* fin) {
+    NodeD<Log>* lento = inicio;
+    NodeD<Log>* rapido = inicio;
+
+    while (rapido != fin && rapido->next != fin) {
+        rapido = rapido->next;
+
+        if (rapido != fin) {
+            rapido = rapido->next;
+            lento = lento->next;
+        }
+    }
+
+    return lento;
+}
+
+// Acomodamos los datos alrededor del pivote
+NodeD<Log>* particion(NodeD<Log>* inicio, NodeD<Log>* fin,
+                       long long& comparaciones) {
+
+    NodeD<Log>* medio = buscarMedio(inicio, fin);
+
+    intercambiar(medio, fin);
+
+    Log pivote = fin->data;
+
+    NodeD<Log>* posicion = inicio;
+    NodeD<Log>* actual = inicio;
+
+    while (actual != fin) {
+        comparaciones++;
+
+        if (actual->data < pivote) {
+            intercambiar(posicion, actual);
+            posicion = posicion->next;
+        }
+
+        actual = actual->next;
+    }
+
+    intercambiar(posicion, fin);
+
+    return posicion;
+}
+
+// Ordenamos usando Quick Sort
+void quickSort(NodeD<Log>* inicio, NodeD<Log>* fin,
+               long long& comparaciones,
+               int profundidad, int& profundidadMaxima) {
+
+    if (inicio == nullptr || fin == nullptr || inicio == fin) {
+        return;
+    }
+
+    if (profundidad > profundidadMaxima) {
+        profundidadMaxima = profundidad;
+    }
+
+    NodeD<Log>* pivote = particion(inicio, fin, comparaciones);
+
+    if (pivote != inicio) {
+        quickSort(inicio, pivote->prev, comparaciones,
+                  profundidad + 1, profundidadMaxima);
+    }
+
+    if (pivote != fin) {
+        quickSort(pivote->next, fin, comparaciones,
+                  profundidad + 1, profundidadMaxima);
+    }
+}
+
+// Guardamos los registros en el archivo de salida
+void guardarArchivo(DoublyLinkedList<Log>& lista) {
+    ofstream salida("../out/output608.out");
+
+    if (!salida.is_open()) {
+        cout << "No se pudo crear el archivo de salida" << endl;
+        return;
+    }
+
+    NodeD<Log>* actual = lista.getNode(0);
+
+    while (actual != nullptr) {
+        Log log = actual->data;
+
+        salida << log.mes << " "
+               << setfill('0') << setw(2) << log.dia
+               << setfill(' ') << " "
+               << log.anio << " "
+               << log.hora << " "
+               << log.ip << " "
+               << log.descripcion << endl;
+
+        actual = actual->next;
+    }
+
+    salida.close();
+
+    cout << "Archivo output608.out generado" << endl;
+}
+
+// Opcion 1 del menu
+void ordenarLogs(DoublyLinkedList<Log>& lista, string nombreArchivo) {
+
+    if (lista.getSize() == 0) {
+        cout << "No hay registros" << endl;
+        return;
+    }
+
+    if (estaOrdenada(lista)) {
+        cout << "La lista ya esta ordenada" << endl;
+        guardarArchivo(lista);
+        return;
+    }
+
+    int prediccion;
+
+    cout << "\nQue crecimiento esperas?" << endl;
+    cout << "1. n log n" << endl;
+    cout << "2. n^2" << endl;
+    cout << "Selecciona una opcion: ";
+    cin >> prediccion;
+
+    if (cin.fail() || (prediccion != 1 && prediccion != 2)) {
+        cout << "Opcion invalida" << endl;
+        cin.clear();
+        cin.ignore(10000, '\n');
+        return;
+    }
+
+    long long comparaciones = 0;
+    int profundidadMaxima = 0;
+
+    NodeD<Log>* inicio = lista.getNode(0);
+    NodeD<Log>* fin = lista.getNode(lista.getSize() - 1);
+
+    auto tiempoInicio = chrono::high_resolution_clock::now();
+
+    quickSort(inicio, fin, comparaciones, 1, profundidadMaxima);
+
+    auto tiempoFinal = chrono::high_resolution_clock::now();
+
+    chrono::duration<double, milli> tiempo = tiempoFinal - tiempoInicio;
+
+    cout << "\nRESULTADOS DEL ORDENAMIENTO" << endl;
+    cout << "Algoritmo: Quick Sort" << endl;
+    cout << "Archivo: " << nombreArchivo << endl;
+    cout << "Registros: " << lista.getSize() << endl;
+    cout << "Tiempo: " << tiempo.count() << " ms" << endl;
+    cout << "Comparaciones: " << comparaciones << endl;
+    cout << "Profundidad maxima: " << profundidadMaxima << endl;
+
+    if (prediccion == 1) {
+        cout << "Prediccion: n log n" << endl;
+    }
+    else {
+        cout << "Prediccion: n^2" << endl;
+    }
+
+    if (estaOrdenada(lista)) {
+        cout << "La lista se ordeno correctamente" << endl;
+        guardarArchivo(lista);
+    }
+    else {
+        cout << "Hubo un error al ordenar" << endl;
+    }
+}
+
 int main() {
 
     Queue<LineaLog> fila;
+    DoublyLinkedList<Log> listaLogs;
 
     string nombreArchivo;
     int opcion;
@@ -198,6 +393,9 @@ int main() {
 
         if (convertirLog(actual.texto, log, motivo)) {
             log.ordenLlegada = cargados;
+
+            listaLogs.addLast(log);
+
             cargados++;
         }
         else {
@@ -211,6 +409,55 @@ int main() {
     cout << "\nResultado de la lectura" << endl;
     cout << "Registros validos: " << cargados << endl;
     cout << "Lineas omitidas: " << omitidos << endl;
+    cout << "Registros en lista doble: "
+         << listaLogs.getSize() << endl;
+
+    // Menu principal
+    int opcionMenu = 0;
+
+    do {
+        cout << "\nMENU PRINCIPAL" << endl;
+        cout << "1. Ordenar por fecha y hora" << endl;
+        cout << "2. Buscar logs por dia" << endl;
+        cout << "3. Mostrar logs por dia en orden descendente" << endl;
+        cout << "4. Estadisticas del archivo" << endl;
+        cout << "5. Salir" << endl;
+        cout << "Selecciona una opcion: ";
+
+        if (!(cin >> opcionMenu)) {
+            cout << "Opcion invalida" << endl;
+            cin.clear();
+            cin.ignore(10000, '\n');
+            continue;
+        }
+
+        switch (opcionMenu) {
+            case 1:
+                ordenarLogs(listaLogs, nombreArchivo);
+                break;
+
+            case 2:
+                cout << "Opcion pendiente" << endl;
+                break;
+
+            case 3:
+                cout << "Opcion pendiente" << endl;
+                break;
+
+            case 4:
+                cout << "Opcion pendiente" << endl;
+                break;
+
+            case 5:
+                cout << "Saliendo del programa" << endl;
+                break;
+
+            default:
+                cout << "Opcion invalida" << endl;
+                break;
+        }
+
+    } while (opcionMenu != 5);
 
     return 0;
 }
