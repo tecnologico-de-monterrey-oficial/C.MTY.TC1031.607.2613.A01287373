@@ -26,6 +26,20 @@ public:
             delete aux;
         }
     }
+    // getNode
+NodeD<T>* getNode(int index) {
+    if (index < 0 || index >= size) {
+        return nullptr;
+    }
+
+    NodeD<T>* aux = head;
+
+    for (int i = 0; i < index; i++) {
+        aux = aux->next;
+    }
+
+    return aux;
+}
 
     // addFirst
     void addFirst(T data) {
@@ -87,6 +101,28 @@ public:
         size++;
     }
 
+
+    // insertAfter
+    void insertAfter(NodeD<T>* node, T data) {
+    if (node == nullptr) {
+        throw invalid_argument("Nodo invalido");
+    }
+
+    NodeD<T>* nuevo = new NodeD<T>(data);
+
+    nuevo->next = node->next;
+    nuevo->prev = node;
+
+    if (node->next != nullptr) {
+        node->next->prev = nuevo;
+    } else {
+        tail = nuevo;
+    }
+
+    node->next = nuevo;
+    size++;
+}
+
     // deleteAt
     bool deleteAt(int index) {
         if (index < 0 || index >= size) {
@@ -118,6 +154,30 @@ public:
 
         return true;
     }
+
+    // deleteNode
+    bool deleteNode(NodeD<T>* node) {
+    if (node == nullptr) {
+        return false;
+    }
+
+    if (node->prev != nullptr) {
+        node->prev->next = node->next;
+    } else {
+        head = node->next;
+    }
+
+    if (node->next != nullptr) {
+        node->next->prev = node->prev;
+    } else {
+        tail = node->prev;
+    }
+
+    delete node;
+    size--;
+
+    return true;
+}
 
     // print
     void print() {
