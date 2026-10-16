@@ -6,10 +6,10 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "LinkedList.h"
-#include "Stack.h"
-#include "Queue.h"
-#include "DoublyLinkedList.h"
+#include "../include/LinkedList.h"
+#include "../include/Stack.h"
+#include "../include/Queue.h"
+#include "../include/DoublyLinkedList.h"
 
 using namespace std;
 
@@ -17,7 +17,7 @@ int main() {
 
     //  simple linked list
 
-    cout << "\n LISTA SIMPLE" << endl;
+    cout << "\nLISTA SIMPLE" << endl;
 
     LinkedList<int> lista;
 
@@ -64,7 +64,7 @@ int main() {
     }
 
 
-    // PILA
+    //PILA
 
     cout << "\n PILA " << endl;
 
