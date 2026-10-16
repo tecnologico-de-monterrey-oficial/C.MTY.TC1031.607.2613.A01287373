@@ -165,7 +165,7 @@ int main() {
     doble.addFirst(20);
 
     cout << "Un elemento: ";
-    doble.print();
+    doble.print();ok 
 
     // agregamos al principio y al final
     doble.addFirst(10);
@@ -178,7 +178,7 @@ int main() {
     NodeD<int>* nodo = doble.getNode(1);
     doble.insertAfter(nodo, 25);
 
-    cout << "Insertamos 25 después del indice 1: ";
+    cout << "Insertamos 25 después del nodo en el indice 1: ";
     doble.print();
 
     // recorremos hacia adelante
@@ -217,7 +217,7 @@ int main() {
     cout << "Lista despues de eliminar todos: ";
     doble.print();
 
-    cout << "Tamañoo final: " << doble.getSize() << endl;
+    cout << "Tamaño final: " << doble.getSize() << endl;
 
     // probamos eliminar de una lista vacia
     if (!doble.deleteAt(0)) {
