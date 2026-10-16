@@ -165,7 +165,7 @@ int main() {
     doble.addFirst(20);
 
     cout << "Un elemento: ";
-    doble.print();ok 
+    doble.print();
 
     // agregamos al principio y al final
     doble.addFirst(10);
