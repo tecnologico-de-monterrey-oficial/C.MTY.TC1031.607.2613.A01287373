@@ -18,6 +18,15 @@ private:
     int size;
 
 public:
+
+// getFirst
+T getFirst() {
+    if (head == nullptr) {
+        throw out_of_range("La lista esta vacia");
+    }
+
+    return head->data;
+}
     LinkedList() : head(nullptr), tail(nullptr), size(0) {}
 
     ~LinkedList() {
