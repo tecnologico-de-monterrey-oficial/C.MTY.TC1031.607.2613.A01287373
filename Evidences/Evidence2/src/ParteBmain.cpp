@@ -1,4 +1,3 @@
-
 // Carolina Vildósola Guzmán A01287373
 
 #include <iostream>
@@ -9,8 +8,11 @@
 #include <cctype>
 #include <chrono>
 #include <cmath>
+#include <map>
+#include <limits>
 
 #include "../include/Queue.h"
+#include "../include/Stack.h"
 #include "../include/Log.h"
 #include "../include/DoublyLinkedList.h"
 
@@ -26,7 +28,7 @@ struct LineaLog {
 bool fechaValida(const Log& log) {
     int mes = log.numeroMes();
 
-    if (mes == 0 || log.anio < 1) {
+    if (mes == 0 || log.anio < 1 || log.anio > 9999) {
         return false;
     }
 
@@ -97,15 +99,45 @@ bool ipValida(const string& ip) {
     return cantidad == 4 && !ip.empty() && ip.back() != '.';
 }
 
+// Revisamos que el texto tenga solo numeros
+bool soloNumeros(const string& texto) {
+    if (texto.empty()) {
+        return false;
+    }
+
+    for (char caracter : texto) {
+        if (!isdigit(static_cast<unsigned char>(caracter))) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 // Convertimos una linea de texto en un Log
 bool convertirLog(const string& linea, Log& log, string& motivo) {
     stringstream ss(linea);
 
-    if (!(ss >> log.mes >> log.dia >> log.anio
+    string diaTexto;
+    string anioTexto;
+
+    if (!(ss >> log.mes >> diaTexto >> anioTexto
              >> log.hora >> log.ip)) {
         motivo = "Faltan datos del registro";
         return false;
     }
+
+    if (!soloNumeros(diaTexto) ||
+        !soloNumeros(anioTexto) ||
+        diaTexto.length() > 2 ||
+        anioTexto.length() != 4) {
+
+        motivo = "Formato de fecha invalido";
+        return false;
+    }
+
+    log.dia = stoi(diaTexto);
+    log.anio = stoi(anioTexto);
 
     getline(ss >> ws, log.descripcion);
 
@@ -134,6 +166,10 @@ bool convertirLog(const string& linea, Log& log, string& motivo) {
 
 // Revisamos si los registros ya estan ordenados
 bool estaOrdenada(DoublyLinkedList<Log>& lista) {
+    if (lista.getSize() <= 1) {
+        return true;
+    }
+
     NodeD<Log>* actual = lista.getNode(0);
 
     while (actual != nullptr && actual->next != nullptr) {
@@ -149,6 +185,10 @@ bool estaOrdenada(DoublyLinkedList<Log>& lista) {
 
 // Cambiamos los datos de dos nodos
 void intercambiar(NodeD<Log>* a, NodeD<Log>* b) {
+    if (a == b) {
+        return;
+    }
+
     Log temporal = a->data;
     a->data = b->data;
     b->data = temporal;
@@ -227,12 +267,12 @@ void quickSort(NodeD<Log>* inicio, NodeD<Log>* fin,
 }
 
 // Guardamos los registros en el archivo de salida
-void guardarArchivo(DoublyLinkedList<Log>& lista) {
+bool guardarArchivo(DoublyLinkedList<Log>& lista) {
     ofstream salida("../out/output608.out");
 
     if (!salida.is_open()) {
         cout << "No se pudo crear el archivo de salida" << endl;
-        return;
+        return false;
     }
 
     NodeD<Log>* actual = lista.getNode(0);
@@ -254,20 +294,47 @@ void guardarArchivo(DoublyLinkedList<Log>& lista) {
     salida.close();
 
     cout << "Archivo output608.out generado" << endl;
+    return true;
+}
+
+// Revisamos si se conservo el orden de llegada
+bool revisarEmpates(DoublyLinkedList<Log>& lista) {
+    NodeD<Log>* actual = lista.getNode(0);
+
+    while (actual != nullptr && actual->next != nullptr) {
+        if (actual->data.claveFecha() ==
+                actual->next->data.claveFecha() &&
+            actual->data.ordenLlegada >
+                actual->next->data.ordenLlegada) {
+
+            return false;
+        }
+
+        actual = actual->next;
+    }
+
+    return true;
 }
 
 // Opcion 1 del menu
-void ordenarLogs(DoublyLinkedList<Log>& lista, string nombreArchivo) {
+bool ordenarLogs(DoublyLinkedList<Log>& lista,
+                 string nombreArchivo,
+                 bool yaOrdenada) {
 
     if (lista.getSize() == 0) {
         cout << "No hay registros" << endl;
-        return;
+        return false;
+    }
+
+    if (yaOrdenada) {
+        cout << "la lista ya esta ordenada" << endl;
+        return true;
     }
 
     if (estaOrdenada(lista)) {
-        cout << "La lista ya esta ordenada" << endl;
+        cout << "la lista ya esta ordenada" << endl;
         guardarArchivo(lista);
-        return;
+        return true;
     }
 
     int prediccion;
@@ -276,13 +343,13 @@ void ordenarLogs(DoublyLinkedList<Log>& lista, string nombreArchivo) {
     cout << "1. n log n" << endl;
     cout << "2. n^2" << endl;
     cout << "Selecciona una opcion: ";
-    cin >> prediccion;
 
-    if (cin.fail() || (prediccion != 1 && prediccion != 2)) {
+    if (!(cin >> prediccion) ||
+        (prediccion != 1 && prediccion != 2)) {
         cout << "Opcion invalida" << endl;
         cin.clear();
         cin.ignore(10000, '\n');
-        return;
+        return false;
     }
 
     long long comparaciones = 0;
@@ -314,13 +381,268 @@ void ordenarLogs(DoublyLinkedList<Log>& lista, string nombreArchivo) {
         cout << "Prediccion: n^2" << endl;
     }
 
-    if (estaOrdenada(lista)) {
-        cout << "La lista se ordeno correctamente" << endl;
-        guardarArchivo(lista);
+    if (!estaOrdenada(lista)) {
+        cout << "Hubo un error al ordenar" << endl;
+        return false;
+    }
+
+    cout << "La lista se ordeno correctamente" << endl;
+
+    if (revisarEmpates(lista)) {
+        cout << "Orden de llegada en empates: Conservado" << endl;
     }
     else {
-        cout << "Hubo un error al ordenar" << endl;
+        cout << "Orden de llegada en empates: No conservado" << endl;
+        return false;
     }
+
+    // Comparamos las cantidades aproximadas
+    double n = lista.getSize();
+    double nLogN = n * log2(n);
+    double nCuadrada = n * n;
+
+    cout << "Estimado n log n: " << nLogN << endl;
+    cout << "Estimado n^2: " << nCuadrada << endl;
+
+    double diferencia1 = abs(comparaciones - nLogN);
+    double diferencia2 = abs(comparaciones - nCuadrada);
+
+    int crecimientoObservado;
+
+    if (diferencia1 <= diferencia2) {
+        crecimientoObservado = 1;
+    }
+    else {
+        crecimientoObservado = 2;
+    }
+
+    // Revisamos cual estimado quedo mas cerca
+    if (crecimientoObservado == prediccion) {
+        cout << "La prediccion fue la mas cercana" << endl;
+    }
+    else {
+        cout << "La prediccion no fue la mas cercana" << endl;
+    }
+
+    return guardarArchivo(lista);
+}
+
+// Creamos una clave que solo incluye el dia
+long long claveDia(const Log& log) {
+    long long clave = log.anio;
+    clave = clave * 100 + log.numeroMes();
+    clave = clave * 100 + log.dia;
+
+    return clave;
+}
+
+// Revisamos la fecha que escribe el usuario
+bool leerDia(Log& fecha) {
+    string texto;
+    string diaTexto;
+    string anioTexto;
+    string sobrante;
+
+    cout << "Escribe el dia (ejemplo: Sep 14 2024): ";
+
+    getline(cin >> ws, texto);
+
+    stringstream ss(texto);
+
+    if (!(ss >> fecha.mes >> diaTexto >> anioTexto)) {
+        cout << "Formato de fecha invalido" << endl;
+        return false;
+    }
+
+    if (ss >> sobrante) {
+        cout << "Formato de fecha invalido" << endl;
+        return false;
+    }
+
+    if (!soloNumeros(diaTexto) ||
+        !soloNumeros(anioTexto) ||
+        diaTexto.length() > 2 ||
+        anioTexto.length() != 4) {
+
+        cout << "Formato de fecha invalido" << endl;
+        return false;
+    }
+
+    fecha.dia = stoi(diaTexto);
+    fecha.anio = stoi(anioTexto);
+
+    if (!fechaValida(fecha)) {
+        cout << "Fecha invalida" << endl;
+        return false;
+    }
+
+    return true;
+}
+
+// Opcion 2: buscar registros por dia
+void buscarDia(DoublyLinkedList<Log>& lista,
+               bool ordenada,
+               Log& ultimaFecha,
+               bool& busquedaRealizada) {
+
+    if (!ordenada) {
+        cout << "Primero debes ordenar los registros con la opcion 1"
+             << endl;
+        return;
+    }
+
+    Log fecha;
+
+    if (!leerDia(fecha)) {
+        return;
+    }
+
+    ultimaFecha = fecha;
+    busquedaRealizada = true;
+
+    long long diaBuscado = claveDia(fecha);
+    int encontrados = 0;
+
+    NodeD<Log>* actual = lista.getNode(0);
+
+    cout << "\nREGISTROS ENCONTRADOS" << endl;
+
+    while (actual != nullptr) {
+        long long diaActual = claveDia(actual->data);
+
+        if (diaActual == diaBuscado) {
+            actual->data.mostrar();
+            encontrados++;
+        }
+
+        // Ya pasamos el dia que buscamos
+        if (diaActual > diaBuscado) {
+            break;
+        }
+
+        actual = actual->next;
+    }
+
+    if (encontrados == 0) {
+        cout << "No hay registros para ese dia" << endl;
+    }
+
+    cout << "Total encontrado: " << encontrados << endl;
+}
+
+// Opcion 3: mostrar registros al reves con pila
+void mostrarDescendente(DoublyLinkedList<Log>& lista,
+                        bool ordenada,
+                        Log& ultimaFecha,
+                        bool& busquedaRealizada) {
+
+    if (!ordenada) {
+        cout << "Primero debes ordenar los registros con la opcion 1"
+             << endl;
+        return;
+    }
+
+    if (!busquedaRealizada) {
+        cout << "Primero necesitamos seleccionar un dia" << endl;
+
+        if (!leerDia(ultimaFecha)) {
+            return;
+        }
+
+        busquedaRealizada = true;
+    }
+
+    Stack<Log> pila;
+    long long diaBuscado = claveDia(ultimaFecha);
+
+    NodeD<Log>* actual = lista.getNode(0);
+
+    while (actual != nullptr) {
+        long long diaActual = claveDia(actual->data);
+
+        if (diaActual == diaBuscado) {
+            pila.push(actual->data);
+        }
+
+        if (diaActual > diaBuscado) {
+            break;
+        }
+
+        actual = actual->next;
+    }
+
+    int total = pila.getSize();
+
+    cout << "\nREGISTROS EN ORDEN DESCENDENTE" << endl;
+
+    while (!pila.isEmpty()) {
+        Log log = pila.pop();
+        log.mostrar();
+    }
+
+    if (total == 0) {
+        cout << "No hay registros para ese dia" << endl;
+    }
+
+    cout << "Total encontrado: " << total << endl;
+}
+
+// Mostramos todos los elementos que tengan la mayor frecuencia
+void mostrarMayor(map<string, int>& datos) {
+    int mayor = 0;
+
+    for (auto dato : datos) {
+        if (dato.second > mayor) {
+            mayor = dato.second;
+        }
+    }
+
+    for (auto dato : datos) {
+        if (dato.second == mayor) {
+            cout << dato.first << ": " << dato.second << endl;
+        }
+    }
+}
+
+// Opcion 4: estadisticas del archivo
+void mostrarEstadisticas(DoublyLinkedList<Log>& lista) {
+    map<string, int> dias;
+    map<string, int> eventos;
+    map<string, int> ips;
+
+    NodeD<Log>* actual = lista.getNode(0);
+
+    while (actual != nullptr) {
+        Log log = actual->data;
+
+        string fecha = log.mes + " " +
+                       to_string(log.dia) + " " +
+                       to_string(log.anio);
+
+        dias[fecha]++;
+        eventos[log.descripcion]++;
+        ips[log.ip]++;
+
+        actual = actual->next;
+    }
+
+    cout << "\nESTADISTICAS DEL ARCHIVO" << endl;
+    cout << "Total de registros: " << lista.getSize() << endl;
+
+    if (lista.getSize() == 0) {
+        cout << "No hay suficientes registros para calcular las estadisticas"
+             << endl;
+        return;
+    }
+
+    cout << "\nDia con mas incidentes:" << endl;
+    mostrarMayor(dias);
+
+    cout << "\nTipo de evento mas frecuente:" << endl;
+    mostrarMayor(eventos);
+
+    cout << "\nIP que aparece mas veces:" << endl;
+    mostrarMayor(ips);
 }
 
 int main() {
@@ -412,6 +734,11 @@ int main() {
     cout << "Registros en lista doble: "
          << listaLogs.getSize() << endl;
 
+    bool ordenada = false;
+    bool busquedaRealizada = false;
+
+    Log ultimaFecha;
+
     // Menu principal
     int opcionMenu = 0;
 
@@ -433,19 +760,23 @@ int main() {
 
         switch (opcionMenu) {
             case 1:
-                ordenarLogs(listaLogs, nombreArchivo);
+                if (ordenarLogs(listaLogs, nombreArchivo, ordenada)) {
+                    ordenada = true;
+                }
                 break;
 
             case 2:
-                cout << "Opcion pendiente" << endl;
+                buscarDia(listaLogs, ordenada,
+                          ultimaFecha, busquedaRealizada);
                 break;
 
             case 3:
-                cout << "Opcion pendiente" << endl;
+                mostrarDescendente(listaLogs, ordenada,
+                                   ultimaFecha, busquedaRealizada);
                 break;
 
             case 4:
-                cout << "Opcion pendiente" << endl;
+                mostrarEstadisticas(listaLogs);
                 break;
 
             case 5:
@@ -461,3 +792,7 @@ int main() {
 
     return 0;
 }
+
+
+
+
