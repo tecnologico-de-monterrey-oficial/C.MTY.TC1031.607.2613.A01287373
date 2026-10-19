@@ -17,10 +17,12 @@ Por ejemplo: Sep 14 2024
 El mes debe escribirse con sus primeras 3 letras en inglés, seguido del día y el año, separados por espacios.
 
 3. Enlace al video explicativo
-Video: [Pegar aquí el enlace al video]
+Video:  https://drive.google.com/file/d/1LaDLWUVe9Bu2OjhWXx2fWS4LRaHyQBlL/view?usp=sharing 
 
 4. Política de uso de IA
 
 Durante esta actividad utilicé ChatGPT y Copilot como una herramienta de apoyo para entender mejor algunos conceptos y revisar mi código.
+
 Lo que permití: Le pedí explicaciones de conceptos que no entendía muy bien, ayuda para revisar la lógica que estaba siguiendo, revisar sintaxis, encontrar errores y sugerencias sobre cómo podía mejorar algunas partes de mi código.
+
 Lo que no permití: No utilicé las respuestas de ChatGPT sin revisarlas ni acepté todas sus sugerencias como correctas. Yo fui revisando las instrucciones, trabajando en las diferentes partes del código y haciendo pruebas para comprobar que lo que me sugería tuviera sentido y funcionara como yo quería.
