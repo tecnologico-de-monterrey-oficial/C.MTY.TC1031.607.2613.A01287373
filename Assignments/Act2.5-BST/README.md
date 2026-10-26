@@ -29,4 +29,5 @@ La verdad a mi en lo personal me ayuda muchísimo, siendo la programación algo 
 
 
 ¿Qué harías diferente la próxima vez para aprender más?
+
 Yo creo que vería más videos, para esta tarea me ayude aprendiendo con la IA pero siento que para mi el ver un video explicativo me ayuda muchísimo entonces siento que es algo que podría aplicar.
